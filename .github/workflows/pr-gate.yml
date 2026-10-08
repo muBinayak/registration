@@ -1,0 +1,22 @@
+name: PR Gate
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  push:
+    branches: [develop]
+
+permissions:
+  contents: write          # checkout + detect job commits the stack-detection cache on push
+  pull-requests: write     # dependency-review + Trivy + pgpverify + SpotBugs PR comments
+  security-events: write   # SARIF uploads to the Security tab
+  checks: write            # reviewdog PR annotations (github-pr-check)
+
+jobs:
+  pr-gate:
+    # Sandbox ref (muBinayak org, holding the updated gate under test).
+    uses: muBinayak/kattu/.github/workflows/pr-gate.yml@esignet-343
+    with:
+      SERVICE_LOCATION: '.'
+      JAVA_SERVICE_LOCATION: './registration-processor'
+    secrets: inherit
